@@ -19,9 +19,6 @@ if __name__ == "__main__":
     m, f = counter()
     # Pie chart, where the slices will be ordered and plotted counter-clockwise:
     labels = 'Male', 'Female'
-    print(m)
-    print(f)
-    print(m+f)
     sizes = [(m*100/(m+f)),(f*100/(m+f))]
 
     fig1, ax1 = plt.subplots()
