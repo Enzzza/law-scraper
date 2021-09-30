@@ -7,7 +7,7 @@ class LawyerSpider(scrapy.Spider):
     name = 'lawyer'
     start_urls = ['https://www.advokomfbih.ba/spisak-advokata-regionalnih-komora-u-federaciji-bosne-i-hercegovine/']
     def parse(self,response):
-        items = response.xpath('//*[@id="tablepress-1"][./tbody]//tr[./td]')
+        items = response.xpath('//*[@id="tablepress-1"][./tbody]//tr')
         d = gender.Detector()
         data = {}
         data['names'] = []
