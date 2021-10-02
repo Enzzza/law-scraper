@@ -1,0 +1,17 @@
+{
+    "lawyers": [
+        {
+            "name": "Enis",
+            "email": "enzzaah@gmail.com",
+            "gender": "female",
+            "sent": false
+        },
+        {
+            "name": "Enzza",
+            "email": "enzzzaapi@gmail.com",
+            "gender": "male",
+            "sent": false
+        }
+       
+    ]
+}
