@@ -67,7 +67,7 @@ def update_sent_status(id):
                     WHERE id = :id""",
                   {'id': id })
 
-def main():
+def email_task():
     connect_to_db("test_lawyers")
     values = get_username()
     if values is not None:
@@ -82,6 +82,3 @@ def main():
     else:
         send_mail('[INFO] AI Lawyer mailer',EMAIL_ADDRESS_FINAL, "All mails sent!")
         
-    
-if __name__ == "__main__":
-    main()
