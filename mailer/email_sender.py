@@ -2,7 +2,6 @@ import os
 import sqlite3
 import smtplib
 import codecs
-import json
 from email.message import EmailMessage
 from dotenv import load_dotenv
 load_dotenv()
