@@ -13,7 +13,7 @@ def connect_to_db(dbName):
     c = conn.cursor()
  
 def main():
-    connect_to_db("test_lawyers")
+    connect_to_db("lawyers")
     c.execute("SELECT * FROM lawyers WHERE sent=0")
     num_of_mails = len(c.fetchall())
     g_mail_limit = 500
