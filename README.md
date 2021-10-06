@@ -9,7 +9,7 @@
 
 # This code is made for purpose of program IEEE Innovation Nation
 
-## 1. Finding some basic demographics
+## **1. Finding some basic demographics**
 
 <p>Our task was to research our target market. And that market consists of lawyers.</p> <p>
 As there were no public demographics statistics available for this particular group of people, we wanted to find some basic information.
@@ -110,7 +110,7 @@ if __name__ == "__main__":
 <br>
 <br>
 
-## 2. Scraping names, emails of lawyers for survey purpose
+## **2. Scraping names, emails of lawyers for survey purpose**
 
 <p>For our survey, we needed to get emails and names so that we can personalize our emails.</p>
 
@@ -189,15 +189,16 @@ if __name__ == "__main__":
 
 <br>
 <br>
+
+## **3. Sending personalized emails to our target group**
 <br>
 
-## 3. Sending personalized emails to our target group
-
-### Generating sqlite database
-
+### **Generating sqlite database**
+<br>
 <p>For easier tracking which lawyer is contacted we will make sqlite database from our <strong><em>lawyers.json</strong></em> file </p>
 <p>Generating <strong>lawyers.db</strong> file</p>
 
+populate_sqlite.py
 ```python
 import sqlite3
 import json
@@ -245,6 +246,162 @@ def main():
 if __name__ == "__main__":
     main()    
 ```
+<br>
 
-### Creating template for our email
+### **Creating template for our email**
 
+<br>
+
+>Look of our template
+
+<br>
+
+<img src="https://raw.githubusercontent.com/Enzzza/law-scraper/master/media/email_template.PNG" data-canonical-src="https://raw.githubusercontent.com/Enzzza/law-scraper/master/media/email_template.PNG" width="400"/>
+
+### **Sending emails to lawyers**
+
+<p>To send email we will use built in python library </p>
+
+email_sender.py
+```python
+import os
+import sqlite3
+import smtplib
+import codecs
+from email.message import EmailMessage
+from dotenv import load_dotenv
+load_dotenv()
+ 
+EMAIL_ADDRESS = os.environ.get("EMAIL_ADDRESS")
+EMAIL_PASSWORD = os.environ.get("EMAIL_PASSWORD")
+EMAIL_ADDRESS_FINAL = os.environ.get("EMAIL_ADDRESS_FINAL")
+ 
+def connect_to_db(dbName):
+    global conn
+    global c
+    conn = sqlite3.connect(f"{dbName}.db")
+    c = conn.cursor()
+ 
+def send_mail(subject, to_address, txt_content, html_content=None):
+    msg = EmailMessage()
+    msg['Subject'] = subject
+    msg['From'] = EMAIL_ADDRESS
+    msg['To'] = to_address
+ 
+ 
+    msg.set_content(txt_content)
+    if html_content is not None:
+        msg.add_alternative(html_content, subtype='html')
+ 
+ 
+    with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+        smtp.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
+        smtp.send_message(msg)
+ 
+def get_content(name):
+ 
+    if name is None:
+        name = "there"
+        footer_msg = "Thank you very much."
+    else:
+        footer_msg = f"Thank you, {name}."
+ 
+    html_file = codecs.open("html_content.html", "r", "utf-8")
+    html_content = html_file.read()
+    html_content = html_content.replace("[name]", name)
+    html_content = html_content.replace("[footer_msg]", footer_msg)
+ 
+    with open('txt_content.txt') as f:
+        txt_content = f.read()
+ 
+    txt_content = txt_content.replace("[name]", name)
+ 
+    return txt_content, html_content
+ 
+def get_username():
+    c.execute("SELECT * FROM lawyers WHERE sent=0")
+    values = c.fetchone()
+    if values is not None:
+        return values
+ 
+    return None
+ 
+def update_sent_status(id):
+    with conn:
+        c.execute("""UPDATE lawyers SET sent = 1
+                    WHERE id = :id""",
+                  {'id': id })
+ 
+def email_task(num_of_mails, i):
+    connect_to_db("lawyers")
+    values = get_username()
+    if values is not None:
+        (id, name, email, _) = values
+        txt_content, html_content = get_content(name)
+        try:
+            send_mail('Want to see the future of the legal profession in BiH?', email, txt_content, html_content)
+            print(f"Sending email to {email} [{i+1}/{num_of_mails}]")
+        except:
+            print("Something went wrong")
+        else:
+            update_sent_status(id)
+    else:
+        send_mail('[INFO] AI Lawyer mailer',EMAIL_ADDRESS_FINAL, f"All of {num_of_mails} mails sent!")
+        print(f"All of {num_of_mails} mails sent!")
+```
+
+<p>But to be able to send all emails we need to use queue solution. </p>
+
+ This solution can be found in [rq python](https://python-rq.org/) library
+
+main.py
+ ```python 
+ import redis
+from rq import Queue
+import sqlite3
+import humanize
+import datetime as dt
+import math
+from email_sender import email_task
+ 
+def connect_to_db(dbName):
+    global conn
+    global c
+    conn = sqlite3.connect(f"{dbName}.db")
+    c = conn.cursor()
+ 
+def main():
+    connect_to_db("lawyers")
+    c.execute("SELECT * FROM lawyers WHERE sent=0")
+    num_of_mails = len(c.fetchall())
+    g_mail_limit = 500
+    duration_between = math.floor(24 * 60 * 60 / g_mail_limit)
+ 
+    print(f"TO send this mails it will take {humanize.naturaldelta(dt.timedelta(seconds=num_of_mails*duration_between))}")
+    r = redis.Redis()
+    q = Queue(connection=r)
+ 
+    if num_of_mails != 0:
+        for m in range(num_of_mails):
+            job = q.enqueue_in(dt.timedelta(seconds=duration_between*m), email_task, num_of_mails, m)
+            print(job)
+ 
+    else:
+        job = q.enqueue_in(dt.timedelta(seconds=duration_between), email_task, num_of_mails, 0)
+
+
+if __name__ == "__main__":
+    main()
+```
+
+<p>To start sending this emails we need to activate rq worker</p>
+
+```bash 
+rq worker --with-scheduler
+```
+
+<p>Than run <strong>main.py</strong> script</p>
+
+```bash 
+python main.py
+```
