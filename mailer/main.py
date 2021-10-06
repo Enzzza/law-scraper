@@ -25,11 +25,11 @@ def main():
  
     if num_of_mails != 0:
         for m in range(num_of_mails):
-            job = q.enqueue_in(dt.timedelta(seconds=duration_between*m), email_task)
+            job = q.enqueue_in(dt.timedelta(seconds=duration_between*m), email_task, num_of_mails, m)
             print(job)
  
     else:
-        job = q.enqueue_in(dt.timedelta(seconds=duration_between), email_task)
+        job = q.enqueue_in(dt.timedelta(seconds=duration_between), email_task, num_of_mails, 0)
 
 
 if __name__ == "__main__":

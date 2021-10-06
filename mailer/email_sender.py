@@ -66,19 +66,19 @@ def update_sent_status(id):
                     WHERE id = :id""",
                   {'id': id })
  
-def email_task():
+def email_task(num_of_mails, i):
     connect_to_db("lawyers")
     values = get_username()
     if values is not None:
         (id, name, email, _) = values
         txt_content, html_content = get_content(name)
         try:
-            send_mail('Be part of future, AI Lawyer needs you!', email, txt_content, html_content)
-            print(f"Sending email to {email}")
+            send_mail('Want to see the future of the legal profession in BiH?', email, txt_content, html_content)
+            print(f"Sending email to {email} [{i+1}/{num_of_mails}]")
         except:
             print("Something went wrong")
         else:
             update_sent_status(id)
     else:
-        send_mail('[INFO] AI Lawyer mailer',EMAIL_ADDRESS_FINAL, "All mails sent!")
-        print("All mails sent!")
+        send_mail('[INFO] AI Lawyer mailer',EMAIL_ADDRESS_FINAL, f"All of {num_of_mails} mails sent!")
+        print(f"All of {num_of_mails} mails sent!")
