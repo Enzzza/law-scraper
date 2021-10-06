@@ -1,2 +1,1 @@
-# law-scraper
-Scraper for getting demographics of lawyers in BiH
+# This code is made for purpose of program IEEE innovation nation Bosnia & Herzegovina
