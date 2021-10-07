@@ -397,11 +397,27 @@ if __name__ == "__main__":
 <p>To start sending this emails we need to activate rq worker</p>
 
 ```bash 
-rq worker --with-scheduler
+rq worker -s
 ```
+<img src="https://raw.githubusercontent.com/Enzzza/law-scraper/master/media/rq_worker.PNG" data-canonical-src="https://raw.githubusercontent.com/Enzzza/law-scraper/master/media/rq_worker.PNG" width="600"/>
+
 
 <p>Than run <strong>main.py</strong> script</p>
 
 ```bash 
 python main.py
 ```
+
+<img src="https://raw.githubusercontent.com/Enzzza/law-scraper/master/media/main_py.PNG" data-canonical-src="https://raw.githubusercontent.com/Enzzza/law-scraper/master/media/main_py.PNG" width="600"/>
+
+<br>
+<br>
+
+<p>We are using a queue to enqueue tasks in Redis database.</p> 
+<p>This script will send an email every 170 seconds.</p>
+
+<br>
+
+> *Example of email received.*
+<img src="https://raw.githubusercontent.com/Enzzza/law-scraper/master/media/email_recived.PNG" data-canonical-src="https://raw.githubusercontent.com/Enzzza/law-scraper/master/media/email_recived.PNG" width="800"/>
+
