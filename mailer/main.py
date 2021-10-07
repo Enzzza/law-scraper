@@ -19,7 +19,7 @@ def main():
     g_mail_limit = 500
     duration_between = math.floor(24 * 60 * 60 / g_mail_limit)
  
-    print(f"TO send this mails it will take {humanize.naturaldelta(dt.timedelta(seconds=num_of_mails*duration_between))}")
+    print(f"To send this mails it will take {humanize.naturaldelta(dt.timedelta(seconds=num_of_mails*duration_between))}")
     r = redis.Redis()
     q = Queue(connection=r)
  
