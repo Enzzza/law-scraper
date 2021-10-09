@@ -400,6 +400,20 @@ if __name__ == "__main__":
 rq worker -s
 ```
 <img src="https://raw.githubusercontent.com/Enzzza/law-scraper/master/media/rq_worker.PNG" data-canonical-src="https://raw.githubusercontent.com/Enzzza/law-scraper/master/media/rq_worker.PNG" width="600"/>
+<br>
+<br>
+
+><p>In our case we are running the script on a digitalocean droplet we need to ensure that script will run after we close ssh connection to our droplet instance and that is possible with the use of command nohup</p>
+<br>
+
+```bash
+nohup rq worker -s
+
+# and if we want to see content of stdout 
+
+tail -f nohup.out
+```
+
 
 
 <p>Than run <strong>main.py</strong> script</p>
