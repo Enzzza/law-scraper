@@ -432,6 +432,6 @@ python main.py
 
 <br>
 
-> *Example of email received.*
+> *example of received email.*
 <img src="https://raw.githubusercontent.com/Enzzza/law-scraper/master/media/email_recived.PNG" data-canonical-src="https://raw.githubusercontent.com/Enzzza/law-scraper/master/media/email_recived.PNG" width="800"/>
 
